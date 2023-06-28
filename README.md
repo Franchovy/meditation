@@ -1,4 +1,4 @@
-# ftc_interview
+# meditation
 
 A new Flutter project.
 
