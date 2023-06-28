@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:meditation/components/sound_player.dart';
+import 'package:meditation/models/sounds.dart';
+
 class Home extends StatefulWidget {
+  Home({this.timerLength = 600, super.key});
+
+  final int timerLength;
+
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  var player = SoundPlayer();
   bool _isTimerActive = false;
-  int _remainingTime = 600; // 10 minutes in seconds
+  late int _remainingTime;
   Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _remainingTime = widget.timerLength;
+  }
 
   void _startTimer() {
     setState(() {
@@ -22,6 +37,7 @@ class _HomeState extends State<Home> {
           _remainingTime--;
         });
       } else {
+        player.playSound(Sounds.meditationEndDefault);
         _resetTimer();
       }
     });
@@ -30,7 +46,7 @@ class _HomeState extends State<Home> {
   void _resetTimer() {
     setState(() {
       _isTimerActive = false;
-      _remainingTime = 600; // Reset back to 10 minutes
+      _remainingTime = widget.timerLength;
     });
 
     _timer?.cancel();
@@ -58,7 +74,9 @@ class _HomeState extends State<Home> {
                 width: 200,
                 height: 200,
                 child: CircularProgressIndicator(
-                    value: _isTimerActive ? _remainingTime / 600 : 1.0,
+                    value: _isTimerActive
+                        ? _remainingTime / widget.timerLength
+                        : 1.0,
                     backgroundColor: Colors.grey.shade200,
                     color: const Color.fromARGB(255, 0, 195, 239)),
               ),
